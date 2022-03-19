@@ -48,6 +48,7 @@ async function handleInput(e) {
   }
 
   grid.cells.forEach((cell) => cell.mergeTiles());
+
   const newTile = new Tile(gameBoard);
   grid.randomEmptyCell().tile = newTile;
 
@@ -81,7 +82,7 @@ function slideTiles(cells) {
   return Promise.all(
     cells.flatMap((group) => {
       const promises = [];
-      for (let i = 0; i < group.length; i++) {
+      for (let i = 1; i < group.length; i++) {
         const cell = group[i];
         if (cell.tile == null) continue;
         let lastValidCell;
@@ -90,6 +91,7 @@ function slideTiles(cells) {
           if (!moveToCell.canAccept(cell.tile)) break;
           lastValidCell = moveToCell;
         }
+
         if (lastValidCell != null) {
           promises.push(cell.tile.waitForTransition());
           if (lastValidCell.tile != null) {
@@ -97,8 +99,8 @@ function slideTiles(cells) {
           } else {
             lastValidCell.tile = cell.tile;
           }
+          cell.tile = null;
         }
-        cell.tile = null;
       }
       return promises;
     })
